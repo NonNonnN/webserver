@@ -1,0 +1,65 @@
+const fs=require('fs');
+const path=require('path')
+class fileManager{
+    //path:string;
+    path:any;
+    constructor(){
+        this.path='D:\\test\\webserver\\user\\'
+    }
+    //读取文件名返回数组
+    //name为JSON对象
+    public fileName(name:any){
+        if(typeof name==='object'){
+            const fileName=fs.readdirSync(`${this.path}\\${name.join("\\")}`);
+            return fileName;
+        }else{
+            const fileName=fs.readdirSync(`${this.path}\\${name}`);
+            return fileName;
+        }
+}
+    //创建文件夹//当前路径
+    public mkdirFile(name,next){
+        if (typeof name==="string"){
+            fs.mkdir(`${this.path}\\${name.join('//')}`,(err)=>{
+                console.error(err);
+            });
+            next();
+        } else{
+            fs.mkdir(`${this.path}\\${name}`,(err)=>{
+                console.error(err);
+            });
+            next();
+        }
+
+    }
+
+    public createDocument(name,next){
+        this.fileName(name,(fsname)=>{
+           for (let i=0;i<fsname.length;i++){
+               if (fsname[i]===name){
+                   next()//如有相同的执行回调函数
+               } else{
+                   fs.appendFileSync(this.path,name);
+               }
+           }
+        });
+    }
+    //移除文件，在windows会出错
+    public removeDocument(name,next){
+        fs.rmdirSync(name,()=>{
+            next()
+        })
+    };
+    //修改文件名
+    public renameDoucment(name,next){
+        fs.rename()
+    }
+    //用户访问文件路径
+    //pathname 预测为数组
+    public accessPath(name,next){
+        const a:string =name.join('//');
+        fs.existsSync(`this.path${a}`);
+        next()
+    }
+}
+module.exports=fileManager;
